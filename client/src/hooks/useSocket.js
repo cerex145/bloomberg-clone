@@ -8,7 +8,10 @@ export function useSocket() {
     const updateIndexes = useMarketStore((state) => state.updateIndexes);
 
     useEffect(() => {
-        const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:3001';
+        let WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:3001';
+        if (WS_URL && !WS_URL.startsWith('http') && !WS_URL.startsWith('ws')) {
+            WS_URL = `wss://${WS_URL}`;
+        }
 
         socketRef.current = io(WS_URL, {
             transports: ['websocket'],
