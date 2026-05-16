@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 
 export const usePortfolioStore = create(
     persist(
-        (set) => ({
+        (set, get) => ({
             // Estado
             positions: [
                 { ticker: 'AAPL', shares: 100, avgCost: 150.25, currentPrice: 182.34 },
@@ -117,14 +117,16 @@ export const usePortfolioStore = create(
                 };
             }),
 
-            getPortfolioValue: (state) => {
+            getPortfolioValue: () => {
+                const state = get();
                 const positions_value = state.positions.reduce((total, pos) => {
                     return total + (pos.shares * pos.currentPrice);
                 }, 0);
                 return positions_value + state.cash;
             },
 
-            getPortfolioReturn: (state) => {
+            getPortfolioReturn: () => {
+                const state = get();
                 const positions_cost = state.positions.reduce((total, pos) => {
                     return total + (pos.shares * pos.avgCost);
                 }, 0);
@@ -135,7 +137,8 @@ export const usePortfolioStore = create(
                 return current - initial;
             },
 
-            getRecentOrders: (state) => {
+            getRecentOrders: () => {
+                const state = get();
                 const orders = state.orders || [];
                 return orders.slice(-10).reverse();
             }
