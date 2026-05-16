@@ -28,11 +28,6 @@ services:
         fromDatabase:
           name: bloomberg-db
           property: connectionString
-      - key: REDIS_URL
-        fromService:
-          type: redis
-          name: bloomberg-redis
-          property: connectionString
       - key: WS_TICKER_INTERVAL_MS
         value: 2000
 
