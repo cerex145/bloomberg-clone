@@ -1,0 +1,76 @@
+services:
+  # ──────────────────────────────────────────────
+  # BACKEND — Node.js / Express / Socket.io
+  # ──────────────────────────────────────────────
+  - type: web
+    name: bloomberg-clone-api
+    runtime: node
+    rootDir: server
+    buildCommand: npm install && npx prisma generate
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: DATA_PROVIDER
+        value: mock
+      - key: CORS_ORIGIN
+        fromService:
+          type: web
+          name: bloomberg-clone-client
+          property: host
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: bloomberg-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: bloomberg-redis
+          property: connectionString
+      - key: WS_TICKER_INTERVAL_MS
+        value: 2000
+
+  # ──────────────────────────────────────────────
+  # FRONTEND — React + Vite (Static Site)
+  # ──────────────────────────────────────────────
+  - type: web
+    name: bloomberg-clone-client
+    runtime: static
+    rootDir: client
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: bloomberg-clone-api
+          property: host
+      - key: VITE_WS_URL
+        fromService:
+          type: web
+          name: bloomberg-clone-api
+          property: host
+
+# ──────────────────────────────────────────────
+# DATABASES
+# ──────────────────────────────────────────────
+databases:
+  - name: bloomberg-db
+    databaseName: bloomberg_clone
+    user: bloomberg
+
+# ──────────────────────────────────────────────
+# REDIS
+# ──────────────────────────────────────────────
+# Render free tier does not include managed Redis via blueprint.
+# Add it manually in the dashboard: New → Redis → name "bloomberg-redis"
+# then copy the Internal URL to the REDIS_URL env var of the API service.

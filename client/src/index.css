@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    @apply font-sans;
+}
+
+code,
+pre {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.font-mono {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+body {
+    @apply bg-bg-primary text-text-primary;
+    margin: 0;
+    padding: 0;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-bg-secondary;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-border-primary rounded;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-text-muted;
+}
+
+/* Inputs y selects */
+input,
+select,
+textarea {
+    @apply font-sans;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    @apply outline-none;
+}
+
+/* Tablas */
+table {
+    border-collapse: collapse;
+}
+
+/* Links */
+a {
+    @apply text-price-blue hover:underline transition-colors;
+}
+
+a:hover {
+    @apply text-accent-orange;
+}

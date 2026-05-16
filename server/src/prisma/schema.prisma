@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  positions   Position[]
+  watchlists  Watchlist[]
+  alerts      Alert[]
+}
+
+model Position {
+  id        String   @id @default(uuid())
+  userId    String
+  ticker    String
+  shares    Decimal
+  avgCost   Decimal
+  openedAt  DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+model Watchlist {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  tickers   String[]
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+model Alert {
+  id        String   @id @default(uuid())
+  userId    String
+  ticker    String
+  condition String   // "price_above" | "price_below" | "volume_spike"
+  value     Decimal
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([ticker])
+}
+
+model PriceHistory {
+  id        String   @id @default(uuid())
+  ticker    String
+  date      DateTime
+  open      Decimal
+  high      Decimal
+  low       Decimal
+  close     Decimal
+  volume    BigInt
+  createdAt DateTime @default(now())
+  
+  @@unique([ticker, date])
+  @@index([ticker])
+}
