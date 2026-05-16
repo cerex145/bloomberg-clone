@@ -136,7 +136,8 @@ export const usePortfolioStore = create(
             },
 
             getRecentOrders: (state) => {
-                return state.orders.slice(-10).reverse();
+                const orders = state.orders || [];
+                return orders.slice(-10).reverse();
             }
         }),
         {
